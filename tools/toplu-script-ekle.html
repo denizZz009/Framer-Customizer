@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Toplu Script Ekleme Aracı</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 3rem;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            color: #2d2f2e;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            color: #856404;
+        }
+        
+        .warning h3 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .step h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .file-label {
+            display: block;
+            background: #667eea;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin: 1rem 0;
+        }
+        
+        .file-label:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .progress {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .results {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            display: none;
+        }
+        
+        .results h3 {
+            color: #155724;
+            margin-bottom: 1rem;
+        }
+        
+        .file-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .file-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status {
+            font-size: 0.9rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔧 Toplu Script Ekleme Aracı</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+            Tüm HTML dosyalarınıza Framer SPA Fix script'ini otomatik ekleyin
+        </p>
+        
+        <div class="warning">
+            <h3>⚠️ Önemli Notlar:</h3>
+            <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                <li>Bu araç tüm HTML dosyalarınıza <code>framer-spa-fix.js</code> script'ini ekleyecek</li>
+                <li>Orijinal dosyalarınız değiştirilecek (yedek alın!)</li>
+                <li><code>customizations.json</code> dosyası tüm HTML dosyalarıyla aynı klasörde olmalı</li>
+                <li><code>framer-spa-fix.js</code> dosyası da aynı klasörde olmalı</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h2>1️⃣ HTML Dosyalarını Seçin</h2>
+            <p>Tüm HTML dosyalarınızı seçin (Ctrl+A ile çoklu seçim yapabilirsiniz)</p>
+            
+            <label class="file-label" for="htmlFiles">
+                📂 HTML Dosyalarını Seç (Çoklu Seçim)
+            </label>
+            <input type="file" id="htmlFiles" class="file-input" accept=".html" multiple>
+            
+            <div id="fileCount" style="text-align: center; color: #666; margin-top: 0.5rem;"></div>
+        </div>
+        
+        <div class="step">
+            <h2>2️⃣ Script'i Ekle</h2>
+            <button class="btn" id="processBtn" onclick="processFiles()" disabled>
+                ✨ Tüm Dosyalara Script Ekle
+            </button>
+            
+            <div class="progress" id="progress">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+        </div>
+        
+        <div class="results" id="results">
+            <h3>✅ İşlem Tamamlandı!</h3>
+            <div id="resultsSummary"></div>
+            <div class="file-list" id="fileList"></div>
+            <button class="btn" onclick="downloadAll()" style="margin-top: 1rem;">
+                💾 Tüm Dosyaları İndir (ZIP)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedFiles = [];
+        let processedFiles = [];
+        
+        // Dosya seçildiğinde
+        document.getElementById('htmlFiles').addEventListener('change', function(e) {
+            selectedFiles = Array.from(e.target.files);
+            document.getElementById('fileCount').textContent = 
+                `✅ ${selectedFiles.length} dosya seçildi`;
+            document.getElementById('processBtn').disabled = false;
+        });
+        
+        // Dosyaları işle
+        async function processFiles() {
+            if (selectedFiles.length === 0) {
+                alert('Lütfen önce dosya seçin!');
+                return;
+            }
+            
+            const progress = document.getElementById('progress');
+            const progressBar = document.getElementById('progressBar');
+            const results = document.getElementById('results');
+            const fileList = document.getElementById('fileList');
+            
+            progress.style.display = 'block';
+            results.style.display = 'none';
+            fileList.innerHTML = '';
+            processedFiles = [];
+            
+            document.getElementById('processBtn').disabled = true;
+            
+            // Framer SPA Fix script'i
+            const spaFixScript = `
+<script id="framer-spa-fix">
+(function() {
+    'use strict';
+    console.log('🔧 Framer SPA Fix aktif...');
+    
+    let customizations = null;
+    let lastUrl = location.href;
+    
+    async function loadCustomizations() {
+        try {
+            const response = await fetch('customizations.json');
+            customizations = await response.json();
+            return true;
+        } catch (error) {
+            console.warn('⚠️ customizations.json bulunamadı');
+            return false;
+        }
+    }
+    
+    function applyChanges() {
+        if (!customizations) return;
+        
+        let count = 0;
+        
+        // Metinleri değiştir
+        if (customizations.texts) {
+            const walker = document.createTreeWalker(
+                document.body,
+                NodeFilter.SHOW_TEXT,
+                {
+                    acceptNode: function(node) {
+                        const parent = node.parentElement;
+                        if (parent && ['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName)) {
+                            return NodeFilter.FILTER_REJECT;
+                        }
+                        return NodeFilter.FILTER_ACCEPT;
+                    }
+                },
+                false
+            );
+            
+            const nodesToChange = [];
+            while (walker.nextNode()) {
+                const node = walker.currentNode;
+                const text = node.nodeValue ? node.nodeValue.trim() : '';
+                if (text && customizations.texts[text]) {
+                    nodesToChange.push({ node, oldText: text, newText: customizations.texts[text] });
+                }
+            }
+            
+            nodesToChange.forEach(({ node, oldText, newText }) => {
+                node.nodeValue = node.nodeValue.replace(oldText, newText);
+                count++;
+            });
+        }
+        
+        // Renkleri uygula
+        if (customizations.colors) {
+            const root = document.documentElement;
+            Object.entries(customizations.colors).forEach(([cssVar, color]) => {
+                root.style.setProperty(cssVar, color);
+            });
+        }
+        
+        // Meta bilgileri
+        if (customizations.pageTitle) document.title = customizations.pageTitle;
+        if (customizations.metaDescription) {
+            const meta = document.querySelector('meta[name="description"]');
+            if (meta) meta.content = customizations.metaDescription;
+        }
+        
+        // Favicon
+        if (customizations.favicon) {
+            const favicons = document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
+            favicons.forEach(link => link.href = customizations.favicon);
+        }
+        
+        // Logo
+        if (customizations.logo) {
+            const logos = document.querySelectorAll('img[alt*="logo" i], img[class*="logo" i], .logo img');
+            logos.forEach(img => {
+                img.src = customizations.logo;
+                img.srcset = '';
+            });
+        }
+        
+        if (count > 0) {
+            console.log('✅ ' + count + ' metin değiştirildi (' + location.pathname + ')');
+        }
+    }
+    
+    // URL değişikliklerini izle
+    function checkUrlChange() {
+        const currentUrl = location.href;
+        if (currentUrl !== lastUrl) {
+            console.log('🔄 Sayfa değişti:', currentUrl);
+            lastUrl = currentUrl;
+            setTimeout(applyChanges, 500);
+            setTimeout(applyChanges, 1000);
+            setTimeout(applyChanges, 2000);
+        }
+    }
+    
+    setInterval(checkUrlChange, 500);
+    
+    // DOM değişikliklerini izle
+    const observer = new MutationObserver((mutations) => {
+        const hasMajorChanges = mutations.some(m => m.addedNodes.length > 5 || m.removedNodes.length > 5);
+        if (hasMajorChanges) {
+            setTimeout(applyChanges, 300);
+        }
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    // Popstate
+    window.addEventListener('popstate', () => {
+        setTimeout(applyChanges, 500);
+    });
+    
+    // Başlat
+    async function init() {
+        const loaded = await loadCustomizations();
+        if (loaded) {
+            setTimeout(applyChanges, 500);
+            setTimeout(applyChanges, 1500);
+            setTimeout(applyChanges, 3000);
+            console.log('✅ Framer SPA Fix yüklendi!');
+        }
+    }
+    
+    init();
+})();
+<\/script>`;
+            
+            // Her dosyayı işle
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const percent = Math.round(((i + 1) / selectedFiles.length) * 100);
+                
+                progressBar.style.width = percent + '%';
+                progressBar.textContent = percent + '%';
+                
+                try {
+                    let htmlContent = await file.text();
+                    
+                    // Zaten script varsa ekleme
+                    if (htmlContent.includes('framer-spa-fix')) {
+                        console.log('⚠️ Script zaten var:', file.name);
+                        processedFiles.push({
+                            name: file.name,
+                            status: 'skipped',
+                            content: htmlContent
+                        });
+                        continue;
+                    }
+                    
+                    // Script'i </body> etiketinden önce ekle
+                    htmlContent = htmlContent.replace('</body>', spaFixScript + '\n</body>');
+                    
+                    processedFiles.push({
+                        name: file.name,
+                        status: 'success',
+                        content: htmlContent
+                    });
+                    
+                } catch (error) {
+                    console.error('Hata:', file.name, error);
+                    processedFiles.push({
+                        name: file.name,
+                        status: 'error',
+                        content: null
+                    });
+                }
+            }
+            
+            // Sonuçları göster
+            showResults();
+        }
+        
+        // Sonuçları göster
+        function showResults() {
+            const results = document.getElementById('results');
+            const summary = document.getElementById('resultsSummary');
+            const fileList = document.getElementById('fileList');
+            
+            const successCount = processedFiles.filter(f => f.status === 'success').length;
+            const skippedCount = processedFiles.filter(f => f.status === 'skipped').length;
+            const errorCount = processedFiles.filter(f => f.status === 'error').length;
+            
+            summary.innerHTML = `
+                <p><strong>📊 Özet:</strong></p>
+                <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                    <li>✅ Başarılı: ${successCount} dosya</li>
+                    <li>⚠️ Atlandı (zaten var): ${skippedCount} dosya</li>
+                    <li>❌ Hata: ${errorCount} dosya</li>
+                </ul>
+            `;
+            
+            fileList.innerHTML = '';
+            processedFiles.forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                
+                let statusText = '';
+                let statusClass = '';
+                
+                if (file.status === 'success') {
+                    statusText = '✅ Eklendi';
+                    statusClass = 'success';
+                } else if (file.status === 'skipped') {
+                    statusText = '⚠️ Atlandı';
+                    statusClass = 'processing';
+                } else {
+                    statusText = '❌ Hata';
+                    statusClass = 'error';
+                }
+                
+                item.innerHTML = `
+                    <span>${file.name}</span>
+                    <span class="status ${statusClass}">${statusText}</span>
+                `;
+                
+                fileList.appendChild(item);
+            });
+            
+            results.style.display = 'block';
+            document.getElementById('progress').style.display = 'none';
+        }
+        
+        // Tüm dosyaları indir
+        function downloadAll() {
+            processedFiles.forEach(file => {
+                if (file.status === 'success' && file.content) {
+                    const blob = new Blob([file.content], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = file.name;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+            });
+            
+            alert('✅ Tüm dosyalar indirildi! Şimdi bunları eski dosyaların üzerine kopyalayın.');
+        }
+    </script>
+</body>
+</html>

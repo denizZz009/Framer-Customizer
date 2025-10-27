@@ -1,0 +1,15 @@
+{
+  "texts": {
+    "LOVERA": "MYAGENCY",
+    "Product design": "Web Tasarım",
+    "Content strategy": "İçerik Stratejisi",
+    "Brand identity design": "Marka Kimliği",
+    "Web development": "Web Geliştirme"
+  },
+  "colors": {
+    "--token-9a91e853-f5c6-46a5-8fa7-05be67b4c926": "#0066ff",
+    "--token-49e4ddec-83e3-4ae4-8788-2f69df6150be": "#0066ff"
+  },
+  "pageTitle": "My Agency - Creative Studio",
+  "metaDescription": "Professional creative agency for web design and development"
+}

@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOVERA - Gelişmiş Özelleştirme Sistemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            height: 100vh;
+        }
+
+        .sidebar {
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 2rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ff531f, #ff825c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333;
+            background: #1a1a1a;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            color: #fff;
+            background: #222;
+        }
+
+        .tab.active {
+            color: #ff531f;
+            border-bottom-color: #ff531f;
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-box {
+            margin-bottom: 1.5rem;
+            position: sticky;
+            top: 0;
+            background: #1a1a1a;
+            padding-bottom: 1rem;
+            z-index: 10;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff531f;
+        }
+
+        .text-item {
+            background: #2a2a2a;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border: 1px solid #333;
+            transition: all 0.3s;
+        }
+
+        .text-item:hover {
+            border-color: #ff531f;
+        }
+
+        .text-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .text-original {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #ff531f;
+        }
+
+        .text-count {
+            font-size: 0.75rem;
+            color: #666;
+            background: #333;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .text-item.changed {
+            border-color: #ff531f;
+            background: #2d2520;
+        }
+
+        .text-item.changed .text-item-header strong::before {
+            content: '✏️ ';
+        }
+
+        .all-texts-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .all-texts-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #333;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.3rem;
+            color: #ff531f;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .modal-text-item {
+            background: #2a2a2a;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border: 1px solid #333;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-text-item:hover {
+            border-color: #ff531f;
+            background: #2d2520;
+        }
+
+        .modal-text-item.selected {
+            border-color: #ff531f;
+            background: #2d2520;
+        }
+
+        .modal-text-preview {
+            font-size: 0.95rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            word-break: break-word;
+        }
+
+        .modal-text-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .edit-panel {
+            background: #2a2a2a;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border: 1px solid #ff531f;
+        }
+
+        .edit-panel-header {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .edit-panel-original {
+            background: #333;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        .edit-panel-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .edit-panel-input:focus {
+            outline: none;
+            border-color: #ff531f;
+        }
+
+        .edit-panel-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .color-item {
+            background: #2a2a2a;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border: 1px solid #333;
+        }
+
+        .color-preview {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .color-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            border: 2px solid #444;
+            cursor: pointer;
+        }
+
+        .color-info {
+            flex: 1;
+        }
+
+        .color-code {
+            font-size: 0.9rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .color-usage {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .btn-group {
+            padding: 1.5rem;
+            border-top: 1px solid #333;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff531f, #ff825c);
+            color: #fff;
+            grid-column: 1 / -1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 83, 31, 0.3);
+        }
+
+        .btn-secondary {
+            background: #2a2a2a;
+            color: #fff;
+            border: 1px solid #444;
+        }
+
+        .btn-secondary:hover {
+            background: #333;
+        }
+
+        .preview {
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-toolbar {
+            background: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-title {
+            font-size: 0.95rem;
+            color: #888;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .toolbar-btn {
+            padding: 0.5rem 1rem;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .toolbar-btn:hover {
+            background: #333;
+        }
+
+        #previewFrame {
+            flex: 1;
+            border: none;
+            background: #fff;
+        }
+
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: #2a2a2a;
+            border: 1px solid #ff531f;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.9rem;
+            z-index: 1000;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: #2a2a2a;
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff531f;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #888;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #333;
+            border-top-color: #ff531f;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="header">
+                <h1>🎨 Gelişmiş Özelleştirme</h1>
+                <p>Framer sitenizdeki her elementi düzenleyin</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('texts')">📝 Metinler</button>
+                <button class="tab" onclick="switchTab('colors')">🎨 Renkler</button>
+                <button class="tab" onclick="switchTab('settings')">⚙️ Ayarlar</button>
+            </div>
+
+            <div id="textsTab" class="tab-content active">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="textSearch" placeholder="🔍 Metin ara..."
+                        onkeyup="filterTexts()">
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+                        <button class="btn btn-secondary" onclick="showAllTexts()" style="flex: 1; padding: 0.5rem;">
+                            📋 Tüm Metinleri Listele
+                        </button>
+                        <button class="btn btn-secondary" onclick="showOnlyChanged()" style="flex: 1; padding: 0.5rem;">
+                            ✏️ Sadece Değişenler
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalTexts">0</div>
+                        <div class="stat-label">Toplam Metin</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="changedTexts">0</div>
+                        <div class="stat-label">Değiştirilen</div>
+                    </div>
+                    <div class="stat-card" style="cursor: pointer;" onclick="scanTexts()"
+                        title="Metinleri yeniden tara">
+                        <div class="stat-number" id="uniqueTexts">0</div>
+                        <div class="stat-label">🔄 Yenile</div>
+                    </div>
+                </div>
+
+                <div id="textsList"></div>
+            </div>
+
+            <div id="colorsTab" class="tab-content">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="colorSearch" placeholder="🔍 Renk ara..."
+                        oninput="filterColors()">
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalColors">0</div>
+                        <div class="stat-label">Toplam Renk</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="changedColors">0</div>
+                        <div class="stat-label">Değiştirilen</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="uniqueColors">0</div>
+                        <div class="stat-label">Benzersiz</div>
+                    </div>
+                </div>
+
+                <div id="colorsList"></div>
+            </div>
+
+            <div id="settingsTab" class="tab-content">
+                <div class="text-item">
+                    <div class="text-item-header">
+                        <strong>📄 Sayfa Başlığı</strong>
+                    </div>
+                    <input type="text" class="text-input" id="pageTitle" placeholder="T.D-Lovera">
+                </div>
+
+                <div class="text-item">
+                    <div class="text-item-header">
+                        <strong>📝 Meta Açıklama</strong>
+                    </div>
+                    <textarea class="text-input" id="metaDescription" rows="3"
+                        placeholder="Site açıklaması..."></textarea>
+                </div>
+
+                <div class="text-item">
+                    <div class="text-item-header">
+                        <strong>🎨 Favicon URL</strong>
+                        <span style="font-size: 0.8rem; color: #888;">(Tarayıcı sekmesindeki ikon)</span>
+                    </div>
+                    <input type="text" class="text-input" id="faviconUrl" placeholder="https://example.com/favicon.png">
+                    <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #888;">
+                        💡 İpucu: PNG veya ICO formatında, 32x32 veya 64x64 boyutunda olmalı
+                    </div>
+                </div>
+
+                <div class="text-item">
+                    <div class="text-item-header">
+                        <strong>🖼️ Logo URL</strong>
+                        <span style="font-size: 0.8rem; color: #888;">(Site logosu)</span>
+                    </div>
+                    <input type="text" class="text-input" id="logoUrl" placeholder="https://example.com/logo.png">
+                    <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #888;">
+                        💡 İpucu: PNG formatında, şeffaf arka planlı olmalı
+                    </div>
+                </div>
+
+                <div class="text-item">
+                    <div class="text-item-header">
+                        <strong>📱 OG Image URL</strong>
+                        <span style="font-size: 0.8rem; color: #888;">(Sosyal medya paylaşım görseli)</span>
+                    </div>
+                    <input type="text" class="text-input" id="ogImageUrl"
+                        placeholder="https://example.com/og-image.jpg">
+                    <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #888;">
+                        💡 İpucu: 1200x630 boyutunda JPG veya PNG
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="applyBtn" onclick="applyChanges()">✨ Değişiklikleri Uygula</button>
+                <button class="btn btn-secondary" onclick="exportAllTextsJSON()"
+                    style="grid-column: 1 / -1; background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);">
+                    📋 Bu Sayfanın Metinlerini JSON Olarak Export Et
+                </button>
+                <button class="btn btn-secondary" onclick="showBulkExportModal()"
+                    style="grid-column: 1 / -1; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">
+                    🗂️ Tüm Sayfaları Toplu Export Et
+                </button>
+                <button class="btn btn-secondary" onclick="downloadJSON()">💾 JSON İndir</button>
+                <button class="btn btn-secondary" onclick="resetChanges()">🔄 Sıfırla</button>
+                <button class="btn btn-secondary" onclick="debugChanges()" style="background: #444;">🐛 Debug</button>
+            </div>
+        </div>
+
+        <div class="preview">
+            <div class="preview-toolbar">
+                <span class="preview-title">📱 Canlı Önizleme</span>
+                <div class="preview-controls">
+                    <select id="pageSelector" onchange="changePage()"
+                        style="padding: 0.5rem; background: #2a2a2a; border: 1px solid #444; border-radius: 4px; color: #fff; margin-right: 0.5rem; cursor: pointer;">
+                        <option value="page-original-framer.html">Ana Sayfa</option>
+                        <option value="">-- Diğer Sayfalar --</option>
+                    </select>
+                    <button class="toolbar-btn" onclick="loadCustomPage()">📂 Dosya Seç</button>
+                    <button class="toolbar-btn" onclick="refreshPreview()">🔄 Yenile</button>
+                    <button class="toolbar-btn" onclick="openInNewTab()">🔗 Yeni Sekme</button>
+                </div>
+            </div>
+            <input type="file" id="customPageInput" accept=".html" style="display: none;"
+                onchange="handleCustomPage(event)">
+            <iframe id="previewFrame" src="page-original-framer.html"></iframe>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <!-- Toplu Export Modal -->
+    <div id="bulkExportModal" class="all-texts-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🗂️ Tüm Sayfaları Toplu Export Et</h2>
+                <button class="modal-close" onclick="closeBulkExportModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: #2a2a2a; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <h3 style="color: #ff531f; margin-bottom: 1rem;">📝 Nasıl Çalışır?</h3>
+                    <ol style="color: #ccc; line-height: 1.8; margin-left: 1.5rem;">
+                        <li>Tüm HTML sayfalarınızı seçin (Ctrl+A ile çoklu seçim)</li>
+                        <li>Her sayfadaki metinler taranacak</li>
+                        <li>Tüm metinler tek bir JSON'da birleştirilecek</li>
+                        <li>Bu JSON'u AI'a gönderip tüm sayfaları birden çevirin</li>
+                    </ol>
+                </div>
+
+                <label class="file-label" for="bulkPagesInput"
+                    style="display: block; text-align: center; padding: 2rem; background: #2a2a2a; border: 2px dashed #444; border-radius: 8px; cursor: pointer; margin-bottom: 1rem;">
+                    📂 HTML Sayfalarını Seç (Çoklu Seçim)
+                </label>
+                <input type="file" id="bulkPagesInput" accept=".html" multiple style="display: none;">
+
+                <div id="bulkProgress"
+                    style="display: none; background: #2a2a2a; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                    <div style="color: #ff531f; margin-bottom: 0.5rem;">İşleniyor...</div>
+                    <div style="background: #1a1a1a; height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div id="bulkProgressBar"
+                            style="background: linear-gradient(135deg, #ff531f, #ff825c); height: 100%; width: 0%; transition: width 0.3s;">
+                        </div>
+                    </div>
+                    <div id="bulkProgressText" style="color: #888; margin-top: 0.5rem; font-size: 0.9rem;"></div>
+                </div>
+
+                <div id="bulkResults"
+                    style="display: none; background: #2a2a2a; padding: 1.5rem; border-radius: 8px; margin-top: 1rem;">
+                    <h3 style="color: #4ade80; margin-bottom: 1rem;">✅ Tamamlandı!</h3>
+                    <div id="bulkStats" style="color: #ccc; line-height: 1.8;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeBulkExportModal()" style="flex: 1;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tüm Metinler Modal -->
+    <div id="allTextsModal" class="all-texts-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Tüm Metinler</h2>
+                <button class="modal-close" onclick="closeAllTextsModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="modalSearch" placeholder="🔍 Listede ara..."
+                        onkeyup="filterModalTexts()">
+                </div>
+                <div id="modalTextsList"></div>
+                <div id="editPanel" class="edit-panel" style="display: none;">
+                    <div class="edit-panel-header">Seçili Metin:</div>
+                    <div class="edit-panel-original" id="editOriginal"></div>
+                    <input type="text" class="edit-panel-input" id="editInput" placeholder="Yeni metin..."
+                        onkeypress="if(event.key==='Enter') saveTextEdit()">
+                    <div class="edit-panel-actions">
+                        <button class="btn btn-primary" onclick="saveTextEdit()" style="flex: 1;">💾 Kaydet</button>
+                        <button class="btn btn-secondary" onclick="cancelTextEdit()">❌ İptal</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAllTextsModal()" style="flex: 1;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let originalTexts = new Map();
+        let originalColors = new Map();
+        let textChanges = new Map();
+        let colorChanges = new Map();
+        let previewDoc = null;
+        let allTextsArray = [];
+        let selectedTextForEdit = null;
+        let currentPageUrl = 'page-original-framer.html';
+        let customPageBlob = null;
+
+        // Sayfa değiştir
+        function changePage() {
+            const selector = document.getElementById('pageSelector');
+            const selectedPage = selector.value;
+
+            if (selectedPage) {
+                currentPageUrl = selectedPage;
+                const iframe = document.getElementById('previewFrame');
+                iframe.src = selectedPage + '?' + Date.now();
+                showNotification('📄 Sayfa değiştiriliyor: ' + selectedPage);
+            }
+        }
+
+        // Özel sayfa yükle
+        function loadCustomPage() {
+            document.getElementById('customPageInput').click();
+        }
+
+        // Özel sayfa seçildiğinde
+        function handleCustomPage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const htmlContent = e.target.result;
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                customPageBlob = URL.createObjectURL(blob);
+
+                const iframe = document.getElementById('previewFrame');
+                iframe.src = customPageBlob;
+
+                currentPageUrl = file.name;
+
+                // Dropdown'a ekle
+                const selector = document.getElementById('pageSelector');
+                const existingOption = Array.from(selector.options).find(opt => opt.value === customPageBlob);
+                if (!existingOption) {
+                    const option = document.createElement('option');
+                    option.value = customPageBlob;
+                    option.textContent = file.name;
+                    selector.appendChild(option);
+                    selector.value = customPageBlob;
+                }
+
+                showNotification('✅ ' + file.name + ' yüklendi!');
+            };
+            reader.readAsText(file);
+        }
+
+        // Iframe yüklendiğinde
+        document.getElementById('previewFrame').onload = function () {
+            previewDoc = this.contentDocument || this.contentWindow.document;
+
+            // Framer dosyası yüklenmesini bekle
+            setTimeout(() => {
+                if (previewDoc && previewDoc.body) {
+                    scanTexts();
+                    scanColors();
+                    loadSettings();
+                } else {
+                    showNotification('⚠️ Sayfa yüklenemedi, lütfen yenileyin');
+                }
+            }, 1000);
+        };
+
+        // Metinleri tara
+        function scanTexts() {
+            const textsList = document.getElementById('textsList');
+            textsList.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+            setTimeout(() => {
+                try {
+                    originalTexts.clear();
+
+                    if (!previewDoc || !previewDoc.body) {
+                        console.error('Preview document not ready');
+                        textsList.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-state-icon">⚠️</div>
+                                <p>Sayfa yüklenemedi</p>
+                                <button class="btn btn-secondary" onclick="refreshPreview()" style="margin-top: 1rem;">🔄 Yeniden Dene</button>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    const walker = previewDoc.createTreeWalker(
+                        previewDoc.body,
+                        NodeFilter.SHOW_TEXT,
+                        null,
+                        false
+                    );
+
+                    const textNodes = [];
+                    let nodeCount = 0;
+
+                    while (walker.nextNode()) {
+                        nodeCount++;
+                        const node = walker.currentNode;
+                        const text = node.nodeValue ? node.nodeValue.trim() : '';
+
+                        // Boş metinleri ve çok uzun metinleri atla
+                        if (text && text.length > 0 && text.length < 500) {
+                            // Script ve style içeriklerini atla
+                            const parent = node.parentElement;
+                            if (parent && !['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName)) {
+                                textNodes.push({ node, text });
+                            }
+                        }
+                    }
+
+                    console.log(`Toplam ${nodeCount} text node tarandı, ${textNodes.length} metin bulundu`);
+
+                    // Benzersiz metinleri grupla
+                    const textGroups = new Map();
+                    textNodes.forEach(({ node, text }) => {
+                        if (!textGroups.has(text)) {
+                            textGroups.set(text, []);
+                        }
+                        textGroups.get(text).push(node);
+                    });
+
+                    originalTexts = textGroups;
+                    console.log(`${originalTexts.size} benzersiz metin bulundu`);
+
+                    renderTexts();
+                    updateStats();
+
+                    if (originalTexts.size > 0) {
+                        showNotification(`✅ ${originalTexts.size} benzersiz metin bulundu!`);
+                    }
+                } catch (error) {
+                    console.error('Metin tarama hatası:', error);
+                    textsList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">❌</div>
+                            <p>Hata oluştu: ${error.message}</p>
+                            <button class="btn btn-secondary" onclick="scanTexts()" style="margin-top: 1rem;">🔄 Tekrar Dene</button>
+                        </div>
+                    `;
+                }
+            }, 500);
+        }
+
+        // Metinleri render et
+        function renderTexts() {
+            const textsList = document.getElementById('textsList');
+            textsList.innerHTML = '';
+
+            if (originalTexts.size === 0) {
+                textsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <p>Henüz metin bulunamadı</p>
+                    </div>
+                `;
+                return;
+            }
+
+            allTextsArray = Array.from(originalTexts.entries());
+
+            allTextsArray.forEach(([text, nodes]) => {
+                const item = document.createElement('div');
+                item.className = 'text-item';
+                item.dataset.originalText = text;
+
+                const currentValue = textChanges.get(text) || text;
+                const isChanged = textChanges.has(text);
+
+                if (isChanged) {
+                    item.classList.add('changed');
+                }
+
+                const escapedText = text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const displayText = text.length > 40 ? text.substring(0, 40) + '...' : text;
+
+                item.innerHTML = `
+                    <div class="text-item-header">
+                        <strong>${displayText}</strong>
+                        <span class="text-count">${nodes.length}x</span>
+                    </div>
+                    <div class="text-original">Orijinal: "${text}"</div>
+                    <input type="text" class="text-input" value="${currentValue.replace(/"/g, '&quot;')}" 
+                           oninput="updateText('${escapedText}', this.value)">
+                `;
+
+                textsList.appendChild(item);
+            });
+        }
+
+        // Renkleri tara (GELİŞTİRİLMİŞ)
+        function scanColors() {
+            const colorsList = document.getElementById('colorsList');
+            colorsList.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+            setTimeout(() => {
+                try {
+                    originalColors.clear();
+                    const colorMap = new Map();
+
+                    if (!previewDoc || !previewDoc.documentElement) {
+                        console.error('Preview document not ready for color scanning');
+                        return;
+                    }
+
+                    // CSS değişkenlerinden renkleri al
+                    const styles = previewDoc.defaultView.getComputedStyle(previewDoc.documentElement);
+                    const root = previewDoc.documentElement;
+
+                    // 1. Root element'teki inline CSS değişkenlerini tara
+                    if (root.style) {
+                        for (let i = 0; i < root.style.length; i++) {
+                            const prop = root.style[i];
+                            if (prop.startsWith('--')) {
+                                const value = root.style.getPropertyValue(prop).trim();
+                                if (value.match(/^#[0-9a-f]{3,8}$/i) || value.match(/^rgb/i)) {
+                                    const hexValue = rgbToHex(value);
+                                    if (hexValue) {
+                                        if (!colorMap.has(hexValue.toLowerCase())) {
+                                            colorMap.set(hexValue.toLowerCase(), []);
+                                        }
+                                        colorMap.get(hexValue.toLowerCase()).push(prop);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // 2. Computed styles'dan CSS değişkenlerini tara
+                    const allCSSVars = [];
+                    for (let i = 0; i < styles.length; i++) {
+                        const prop = styles[i];
+                        if (prop.startsWith('--')) {
+                            allCSSVars.push(prop);
+                        }
+                    }
+
+                    allCSSVars.forEach(prop => {
+                        const value = styles.getPropertyValue(prop).trim();
+                        if (value.match(/^#[0-9a-f]{3,8}$/i) || value.match(/^rgb/i)) {
+                            const hexValue = rgbToHex(value);
+                            if (hexValue) {
+                                if (!colorMap.has(hexValue.toLowerCase())) {
+                                    colorMap.set(hexValue.toLowerCase(), []);
+                                }
+                                if (!colorMap.get(hexValue.toLowerCase()).includes(prop)) {
+                                    colorMap.get(hexValue.toLowerCase()).push(prop);
+                                }
+                            }
+                        }
+                    });
+
+                    // 3. StyleSheets'ten CSS değişkenlerini tara
+                    try {
+                        Array.from(previewDoc.styleSheets).forEach(sheet => {
+                            try {
+                                Array.from(sheet.cssRules || []).forEach(rule => {
+                                    if (rule.style) {
+                                        Array.from(rule.style).forEach(prop => {
+                                            if (prop.startsWith('--')) {
+                                                const value = rule.style.getPropertyValue(prop).trim();
+                                                if (value.match(/^#[0-9a-f]{3,8}$/i) || value.match(/^rgb/i)) {
+                                                    const hexValue = rgbToHex(value);
+                                                    if (hexValue) {
+                                                        if (!colorMap.has(hexValue.toLowerCase())) {
+                                                            colorMap.set(hexValue.toLowerCase(), []);
+                                                        }
+                                                        if (!colorMap.get(hexValue.toLowerCase()).includes(prop)) {
+                                                            colorMap.get(hexValue.toLowerCase()).push(prop);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                            } catch (e) {
+                                // CORS hatalarını yoksay
+                            }
+                        });
+                    } catch (e) {
+                        console.warn('StyleSheet tarama hatası:', e);
+                    }
+
+                    console.log(`${colorMap.size} benzersiz renk bulundu`);
+                    console.log('Renk detayları:', Array.from(colorMap.entries()));
+
+                    originalColors = colorMap;
+                    renderColors();
+                    updateStats();
+
+                    if (originalColors.size > 0) {
+                        showNotification(`✅ ${originalColors.size} renk bulundu!`);
+                    } else {
+                        showNotification('⚠️ Renk bulunamadı. Sayfa tam yüklenmemiş olabilir.');
+                    }
+                } catch (error) {
+                    console.error('Renk tarama hatası:', error);
+                    colorsList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">❌</div>
+                            <p>Renk tarama hatası: ${error.message}</p>
+                            <button class="btn btn-secondary" onclick="scanColors()" style="margin-top: 1rem;">🔄 Tekrar Dene</button>
+                        </div>
+                    `;
+                }
+            }, 1000); // Daha uzun bekle
+        }
+
+        // RGB'yi HEX'e çevir
+        function rgbToHex(color) {
+            if (color.startsWith('#')) return color;
+
+            const rgb = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+            if (rgb) {
+                const r = parseInt(rgb[1]).toString(16).padStart(2, '0');
+                const g = parseInt(rgb[2]).toString(16).padStart(2, '0');
+                const b = parseInt(rgb[3]).toString(16).padStart(2, '0');
+                return `#${r}${g}${b}`;
+            }
+
+            const rgba = color.match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*[\d.]+\)$/);
+            if (rgba) {
+                const r = parseInt(rgba[1]).toString(16).padStart(2, '0');
+                const g = parseInt(rgba[2]).toString(16).padStart(2, '0');
+                const b = parseInt(rgba[3]).toString(16).padStart(2, '0');
+                return `#${r}${g}${b}`;
+            }
+
+            return null;
+        }
+
+        // Renkleri render et (CANLI ÖNİZLEME İLE)
+        function renderColors() {
+            const colorsList = document.getElementById('colorsList');
+            colorsList.innerHTML = '';
+
+            if (originalColors.size === 0) {
+                colorsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎨</div>
+                        <p>Henüz renk bulunamadı</p>
+                        <button class="btn btn-secondary" onclick="scanColors()" style="margin-top: 1rem;">🔄 Renkleri Tara</button>
+                    </div>
+                `;
+                return;
+            }
+
+            Array.from(originalColors.entries()).forEach(([color, props]) => {
+                const item = document.createElement('div');
+                item.className = 'color-item';
+
+                const currentColor = colorChanges.get(color) || color;
+                const isChanged = colorChanges.has(color);
+
+                if (isChanged) {
+                    item.style.borderColor = '#ff531f';
+                    item.style.background = '#2d2520';
+                }
+
+                // CSS değişken isimlerini göster
+                const propsText = props.length > 3
+                    ? props.slice(0, 3).join(', ') + ` (+${props.length - 3} daha)`
+                    : props.join(', ');
+
+                item.innerHTML = `
+                    <div class="color-preview">
+                        <input type="color" class="color-box" value="${currentColor}" 
+                               onchange="updateColor('${color}', this.value)" 
+                               oninput="updateColor('${color}', this.value)"
+                               style="background: ${currentColor}; cursor: pointer;">
+                        <div class="color-info">
+                            <div class="color-code" style="display: flex; align-items: center; gap: 0.5rem;">
+                                ${isChanged ? '✏️ ' : ''}${currentColor}
+                                ${isChanged ? `<span style="color: #888; text-decoration: line-through; font-size: 0.8rem;">${color}</span>` : ''}
+                            </div>
+                            <div class="color-usage" style="font-size: 0.75rem; color: #888; margin-top: 0.25rem;">
+                                ${props.length} CSS değişkeni
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666; margin-top: 0.25rem; font-family: monospace; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${props.join(', ')}">
+                                ${propsText}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                colorsList.appendChild(item);
+            });
+        }
+
+        // Metin güncelle (CANLI ÖNİZLEME İLE)
+        function updateText(originalText, newText) {
+            textChanges.set(originalText, newText);
+            updateStats();
+
+            // CANLI ÖNİZLEME: Metni hemen uygula (opsiyonel - performans için kapalı)
+            // Kullanıcı "Değişiklikleri Uygula" butonuna basmalı
+        }
+
+        // Renk güncelle
+        function updateColor(originalColor, newColor) {
+            colorChanges.set(originalColor, newColor);
+            updateStats();
+
+            // CANLI ÖNİZLEME: Rengi hemen uygula
+            if (previewDoc && previewDoc.documentElement) {
+                const props = originalColors.get(originalColor);
+                if (props) {
+                    props.forEach(prop => {
+                        previewDoc.documentElement.style.setProperty(prop, newColor);
+                    });
+                }
+            }
+        }
+
+        // İstatistikleri güncelle
+        function updateStats() {
+            document.getElementById('totalTexts').textContent = originalTexts.size;
+            document.getElementById('changedTexts').textContent = textChanges.size;
+            document.getElementById('uniqueTexts').textContent = originalTexts.size;
+
+            document.getElementById('totalColors').textContent = originalColors.size;
+            document.getElementById('changedColors').textContent = colorChanges.size;
+            document.getElementById('uniqueColors').textContent = originalColors.size;
+        }
+
+        // Metinleri filtrele
+        function filterTexts() {
+            const search = document.getElementById('textSearch').value.toLowerCase();
+            const items = document.querySelectorAll('#textsList .text-item');
+
+            let visibleCount = 0;
+            items.forEach(item => {
+                const text = item.dataset.originalText.toLowerCase();
+                const shouldShow = text.includes(search);
+                item.style.display = shouldShow ? 'block' : 'none';
+                if (shouldShow) visibleCount++;
+            });
+
+            // Sonuç sayısını göster
+            if (search && visibleCount === 0) {
+                const textsList = document.getElementById('textsList');
+                const existing = textsList.querySelector('.empty-state');
+                if (!existing) {
+                    const emptyState = document.createElement('div');
+                    emptyState.className = 'empty-state';
+                    emptyState.innerHTML = `
+                        <div class="empty-state-icon">🔍</div>
+                        <p>"${search}" için sonuç bulunamadı</p>
+                    `;
+                    textsList.appendChild(emptyState);
+                }
+            } else {
+                const emptyState = document.querySelector('#textsList .empty-state');
+                if (emptyState) emptyState.remove();
+            }
+        }
+
+        // Tüm metinleri göster
+        function showAllTexts() {
+            const modal = document.getElementById('allTextsModal');
+            const modalList = document.getElementById('modalTextsList');
+
+            modalList.innerHTML = '';
+
+            if (allTextsArray.length === 0) {
+                modalList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <p>Henüz metin bulunamadı</p>
+                    </div>
+                `;
+            } else {
+                allTextsArray.forEach(([text, nodes], index) => {
+                    const item = document.createElement('div');
+                    item.className = 'modal-text-item';
+                    item.dataset.index = index;
+                    item.dataset.originalText = text;
+
+                    const isChanged = textChanges.has(text);
+                    const currentValue = textChanges.get(text) || text;
+
+                    if (isChanged) {
+                        item.classList.add('selected');
+                    }
+
+                    const displayText = text.length > 100 ? text.substring(0, 100) + '...' : text;
+
+                    item.innerHTML = `
+                        <div class="modal-text-preview">${isChanged ? '✏️ ' : ''}${displayText}</div>
+                        <div class="modal-text-meta">
+                            <span>${nodes.length} yerde kullanılıyor</span>
+                            <span>${text.length} karakter</span>
+                        </div>
+                    `;
+
+                    item.onclick = () => selectTextForEdit(text, index);
+                    modalList.appendChild(item);
+                });
+            }
+
+            modal.classList.add('show');
+        }
+
+        // Metni düzenleme için seç
+        function selectTextForEdit(text, index) {
+            selectedTextForEdit = text;
+
+            // Tüm itemleri deselect et
+            document.querySelectorAll('.modal-text-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            // Seçili olanı işaretle
+            const selectedItem = document.querySelector(`.modal-text-item[data-index="${index}"]`);
+            if (selectedItem) {
+                selectedItem.classList.add('selected');
+            }
+
+            // Edit panelini göster
+            const editPanel = document.getElementById('editPanel');
+            const editOriginal = document.getElementById('editOriginal');
+            const editInput = document.getElementById('editInput');
+
+            editOriginal.textContent = text;
+            editInput.value = textChanges.get(text) || text;
+            editPanel.style.display = 'block';
+            editInput.focus();
+        }
+
+        // Metin düzenlemesini kaydet
+        function saveTextEdit() {
+            if (!selectedTextForEdit) return;
+
+            const newValue = document.getElementById('editInput').value;
+            if (newValue && newValue !== selectedTextForEdit) {
+                updateText(selectedTextForEdit, newValue);
+                showNotification('✅ Metin kaydedildi!');
+
+                // Listeyi güncelle
+                const item = document.querySelector(`.modal-text-item[data-original-text="${selectedTextForEdit}"]`);
+                if (item) {
+                    item.classList.add('selected');
+                    const preview = item.querySelector('.modal-text-preview');
+                    if (preview) {
+                        const displayText = newValue.length > 100 ? newValue.substring(0, 100) + '...' : newValue;
+                        preview.textContent = '✏️ ' + displayText;
+                    }
+                }
+
+                cancelTextEdit();
+            }
+        }
+
+        // Metin düzenlemesini iptal et
+        function cancelTextEdit() {
+            selectedTextForEdit = null;
+            document.getElementById('editPanel').style.display = 'none';
+            document.getElementById('editInput').value = '';
+        }
+
+        // Modal'ı kapat
+        function closeAllTextsModal() {
+            document.getElementById('allTextsModal').classList.remove('show');
+            cancelTextEdit();
+            renderTexts(); // Ana listeyi güncelle
+        }
+
+        // Modal içinde arama
+        function filterModalTexts() {
+            const search = document.getElementById('modalSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.modal-text-item');
+
+            items.forEach(item => {
+                const text = item.dataset.originalText.toLowerCase();
+                item.style.display = text.includes(search) ? 'block' : 'none';
+            });
+        }
+
+        // Sadece değişenleri göster
+        function showOnlyChanged() {
+            const items = document.querySelectorAll('#textsList .text-item');
+
+            let changedCount = 0;
+            items.forEach(item => {
+                const text = item.dataset.originalText;
+                const isChanged = textChanges.has(text);
+                item.style.display = isChanged ? 'block' : 'none';
+                if (isChanged) changedCount++;
+            });
+
+            if (changedCount === 0) {
+                const textsList = document.getElementById('textsList');
+                textsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✏️</div>
+                        <p>Henüz değişiklik yapılmadı</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Renkleri filtrele
+        function filterColors() {
+            const search = document.getElementById('colorSearch').value.toLowerCase();
+            const items = document.querySelectorAll('#colorsList .color-item');
+
+            items.forEach(item => {
+                const color = item.querySelector('.color-code').textContent.toLowerCase();
+                item.style.display = color.includes(search) ? 'block' : 'none';
+            });
+        }
+
+        // Tab değiştir
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // Ayarları yükle
+        function loadSettings() {
+            document.getElementById('pageTitle').value = previewDoc.title || '';
+
+            const metaDesc = previewDoc.querySelector('meta[name="description"]');
+            if (metaDesc) {
+                document.getElementById('metaDescription').value = metaDesc.content;
+            }
+
+            const favicon = previewDoc.querySelector('link[rel="icon"]');
+            if (favicon) {
+                document.getElementById('faviconUrl').value = favicon.href;
+            }
+
+            // Logo URL'ini bul
+            const logo = previewDoc.querySelector('img[alt*="logo" i], img[class*="logo" i], .logo img');
+            if (logo) {
+                document.getElementById('logoUrl').value = logo.src;
+            }
+
+            const ogImage = previewDoc.querySelector('meta[property="og:image"]');
+            if (ogImage) {
+                document.getElementById('ogImageUrl').value = ogImage.content;
+            }
+        }
+
+        // Değişiklikleri uygula
+        function applyChanges() {
+            const btn = document.getElementById('applyBtn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '⏳ Uygulanıyor...';
+
+            let textCount = 0;
+            let colorCount = 0;
+
+            try {
+                // Metinleri uygula
+                textChanges.forEach((newText, originalText) => {
+                    const nodes = originalTexts.get(originalText);
+                    if (nodes) {
+                        nodes.forEach(node => {
+                            if (node.nodeValue && node.nodeValue.includes(originalText)) {
+                                node.nodeValue = node.nodeValue.replace(new RegExp(originalText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), newText);
+                                textCount++;
+                            }
+                        });
+                    }
+                });
+
+                // Renkleri uygula (tekrar uygula, canlı önizlemede değişmiş olabilir)
+                colorChanges.forEach((newColor, originalColor) => {
+                    const props = originalColors.get(originalColor);
+                    if (props) {
+                        props.forEach(prop => {
+                            previewDoc.documentElement.style.setProperty(prop, newColor);
+                            colorCount++;
+                        });
+                    }
+                });
+
+                console.log(`✅ ${textCount} metin, ${colorCount} renk uygulandı`);
+            } catch (error) {
+                console.error('Uygulama hatası:', error);
+                showNotification('❌ Hata: ' + error.message);
+                return;
+            }
+
+            // Ayarları uygula
+            const pageTitle = document.getElementById('pageTitle').value;
+            if (pageTitle) {
+                previewDoc.title = pageTitle;
+                const ogTitle = previewDoc.querySelector('meta[property="og:title"]');
+                if (ogTitle) ogTitle.content = pageTitle;
+                const twitterTitle = previewDoc.querySelector('meta[name="twitter:title"]');
+                if (twitterTitle) twitterTitle.content = pageTitle;
+            }
+
+            const metaDesc = document.getElementById('metaDescription').value;
+            if (metaDesc) {
+                let metaDescEl = previewDoc.querySelector('meta[name="description"]');
+                if (metaDescEl) metaDescEl.content = metaDesc;
+
+                const ogDesc = previewDoc.querySelector('meta[property="og:description"]');
+                if (ogDesc) ogDesc.content = metaDesc;
+
+                const twitterDesc = previewDoc.querySelector('meta[name="twitter:description"]');
+                if (twitterDesc) twitterDesc.content = metaDesc;
+            }
+
+            // Favicon değiştir
+            const faviconUrl = document.getElementById('faviconUrl').value;
+            if (faviconUrl) {
+                const favicons = previewDoc.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
+                favicons.forEach(link => {
+                    link.href = faviconUrl;
+                });
+                if (favicons.length === 0) {
+                    const link = previewDoc.createElement('link');
+                    link.rel = 'icon';
+                    link.href = faviconUrl;
+                    previewDoc.head.appendChild(link);
+                }
+            }
+
+            // Logo değiştir
+            const logoUrl = document.getElementById('logoUrl').value;
+            if (logoUrl) {
+                const logos = previewDoc.querySelectorAll('img[alt*="logo" i], img[class*="logo" i], .logo img, [class*="logo"] img');
+                logos.forEach(img => {
+                    img.src = logoUrl;
+                    img.srcset = '';
+                });
+            }
+
+            // OG Image değiştir
+            const ogImageUrl = document.getElementById('ogImageUrl').value;
+            if (ogImageUrl) {
+                const ogImage = previewDoc.querySelector('meta[property="og:image"]');
+                if (ogImage) ogImage.content = ogImageUrl;
+                const twitterImage = previewDoc.querySelector('meta[name="twitter:image"]');
+                if (twitterImage) twitterImage.content = ogImageUrl;
+            }
+
+            // Detaylı bildirim
+            const changes = [];
+            if (textCount > 0) changes.push(`${textCount} metin`);
+            if (colorCount > 0) changes.push(`${colorCount} renk`);
+            if (pageTitle) changes.push('başlık');
+            if (metaDesc) changes.push('açıklama');
+            if (faviconUrl) changes.push('favicon');
+            if (logoUrl) changes.push('logo');
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.textContent = originalText;
+
+                if (changes.length > 0) {
+                    showNotification(`✅ ${changes.join(', ')} uygulandı!`);
+                } else {
+                    showNotification('⚠️ Henüz değişiklik yapmadınız!');
+                }
+            }, 500);
+        }
+
+        // TÜM METİNLERİ JSON OLARAK EXPORT ET (AI için)
+        function exportAllTextsJSON() {
+            if (originalTexts.size === 0) {
+                showNotification('⚠️ Önce metinleri tarayın!');
+                return;
+            }
+
+            // Tüm metinleri orijinal haliyle JSON'a çevir
+            const allTextsJSON = {
+                texts: {},
+                colors: {},
+                info: {
+                    totalTexts: originalTexts.size,
+                    totalColors: originalColors.size,
+                    exportDate: new Date().toISOString(),
+                    instruction: "Bu JSON'u AI'a gönderin ve metinleri değiştirmesini isteyin. Renkleri de değiştirebilirsiniz. Sonra inject-customizations.html ile sitenize ekleyin."
+                }
+            };
+
+            // Tüm metinleri ekle (orijinal = orijinal, AI değiştirecek)
+            originalTexts.forEach((nodes, text) => {
+                // Çok kısa metinleri (1-2 karakter) atla
+                if (text.length > 2) {
+                    allTextsJSON.texts[text] = text; // AI değiştirecek
+                }
+            });
+
+            // Renkleri ekle (CSS değişken isimleriyle)
+            originalColors.forEach((props, color) => {
+                props.forEach(prop => {
+                    allTextsJSON.colors[prop] = color; // Orijinal renk
+                });
+            });
+
+            // JSON'u indir
+            const json = JSON.stringify(allTextsJSON, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'all-texts-for-ai.json';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            // Kullanıcıya bilgi ver
+            showNotification(`✅ ${Object.keys(allTextsJSON.texts).length} metin + ${Object.keys(allTextsJSON.colors).length} renk JSON olarak indirildi!`);
+
+            // Console'a da yazdır
+            console.log('📋 TÜM METİNLER VE RENKLER JSON FORMATINDA:');
+            console.log(json);
+            console.log('\n💡 KULLANIM:');
+            console.log('1. Bu JSON\'u AI\'a gönderin');
+            console.log('2. "Bu metinleri Türkçe\'ye çevir" veya istediğiniz değişikliği söyleyin');
+            console.log('3. Renkleri de değiştirebilirsiniz (örn: "#ff531f" → "#0066ff")');
+            console.log('4. AI\'dan dönen JSON\'u inject-customizations.html ile sitenize ekleyin');
+        }
+
+        // Değiştirilmiş metinleri JSON olarak indir
+        function downloadJSON() {
+            if (textChanges.size === 0 && colorChanges.size === 0) {
+                showNotification('⚠️ Henüz değişiklik yapmadınız!');
+                return;
+            }
+
+            const customizations = {
+                texts: Object.fromEntries(textChanges),
+                colors: {},
+                pageTitle: document.getElementById('pageTitle').value,
+                metaDescription: document.getElementById('metaDescription').value,
+                favicon: document.getElementById('faviconUrl').value,
+                logo: document.getElementById('logoUrl').value,
+                ogImage: document.getElementById('ogImageUrl').value,
+                timestamp: new Date().toISOString()
+            };
+
+            colorChanges.forEach((newColor, originalColor) => {
+                const props = originalColors.get(originalColor);
+                if (props) {
+                    props.forEach(prop => {
+                        customizations.colors[prop] = newColor;
+                    });
+                }
+            });
+
+            const json = JSON.stringify(customizations, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'customizations.json';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            showNotification('💾 Değişiklikler JSON olarak indirildi!');
+        }
+
+        // Sıfırla
+        function resetChanges() {
+            if (confirm('Tüm değişiklikler kaybolacak. Devam etmek istiyor musunuz?')) {
+                textChanges.clear();
+                colorChanges.clear();
+                refreshPreview();
+                showNotification('🔄 Değişiklikler sıfırlandı!');
+            }
+        }
+
+        // Önizlemeyi yenile
+        function refreshPreview() {
+            const iframe = document.getElementById('previewFrame');
+            showNotification('🔄 Sayfa yenileniyor...');
+
+            // Değişiklikleri temizle
+            textChanges.clear();
+            colorChanges.clear();
+
+            // Iframe'i yenile
+            if (customPageBlob) {
+                iframe.src = customPageBlob + '?' + Date.now();
+            } else {
+                iframe.src = currentPageUrl + '?' + Date.now();
+            }
+        }
+
+        // Yeni sekmede aç
+        function openInNewTab() {
+            if (customPageBlob) {
+                window.open(customPageBlob, '_blank');
+            } else {
+                window.open(currentPageUrl, '_blank');
+            }
+        }
+
+        // Bildirim göster
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Debug - Değişiklikleri console'a yazdır
+        function debugChanges() {
+            console.log('=== DEBUG BİLGİLERİ ===');
+            console.log('📝 Metin Değişiklikleri:', textChanges.size);
+            textChanges.forEach((newText, oldText) => {
+                console.log(`  "${oldText}" → "${newText}"`);
+            });
+
+            console.log('\n🎨 Renk Değişiklikleri:', colorChanges.size);
+            colorChanges.forEach((newColor, oldColor) => {
+                const props = originalColors.get(oldColor);
+                console.log(`  ${oldColor} → ${newColor} (${props ? props.length : 0} CSS değişkeni)`);
+                if (props) {
+                    props.forEach(prop => console.log(`    - ${prop}`));
+                }
+            });
+
+            console.log('\n📊 İstatistikler:');
+            console.log(`  Toplam Metin: ${originalTexts.size}`);
+            console.log(`  Toplam Renk: ${originalColors.size}`);
+            console.log(`  Değiştirilen Metin: ${textChanges.size}`);
+            console.log(`  Değiştirilen Renk: ${colorChanges.size}`);
+
+            console.log('\n⚙️ Ayarlar:');
+            console.log(`  Sayfa Başlığı: ${document.getElementById('pageTitle').value}`);
+            console.log(`  Favicon: ${document.getElementById('faviconUrl').value}`);
+            console.log(`  Logo: ${document.getElementById('logoUrl').value}`);
+
+            showNotification('🐛 Debug bilgileri console\'da!');
+        }
+
+        // TOPLU EXPORT SİSTEMİ
+        function showBulkExportModal() {
+            document.getElementById('bulkExportModal').classList.add('show');
+
+            // Event listener ekle
+            document.getElementById('bulkPagesInput').onchange = handleBulkPages;
+        }
+
+        function closeBulkExportModal() {
+            document.getElementById('bulkExportModal').classList.remove('show');
+            document.getElementById('bulkProgress').style.display = 'none';
+            document.getElementById('bulkResults').style.display = 'none';
+            document.getElementById('bulkProgressBar').style.width = '0%';
+        }
+
+        async function handleBulkPages(event) {
+            const files = Array.from(event.target.files);
+            if (files.length === 0) return;
+
+            const progress = document.getElementById('bulkProgress');
+            const results = document.getElementById('bulkResults');
+            const progressBar = document.getElementById('bulkProgressBar');
+            const progressText = document.getElementById('bulkProgressText');
+
+            progress.style.display = 'block';
+            results.style.display = 'none';
+
+            const allTexts = new Map();
+            let totalPages = files.length;
+            let processedPages = 0;
+
+            for (const file of files) {
+                try {
+                    const htmlContent = await file.text();
+
+                    // Geçici bir iframe oluştur
+                    const tempIframe = document.createElement('iframe');
+                    tempIframe.style.display = 'none';
+                    document.body.appendChild(tempIframe);
+
+                    // HTML'i iframe'e yükle
+                    tempIframe.contentDocument.open();
+                    tempIframe.contentDocument.write(htmlContent);
+                    tempIframe.contentDocument.close();
+
+                    // Biraz bekle (DOM'un yüklenmesi için)
+                    await new Promise(resolve => setTimeout(resolve, 500));
+
+                    // Metinleri tara
+                    const doc = tempIframe.contentDocument;
+                    const walker = doc.createTreeWalker(
+                        doc.body,
+                        NodeFilter.SHOW_TEXT,
+                        {
+                            acceptNode: function (node) {
+                                const parent = node.parentElement;
+                                if (parent && ['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName)) {
+                                    return NodeFilter.FILTER_REJECT;
+                                }
+                                return NodeFilter.FILTER_ACCEPT;
+                            }
+                        },
+                        false
+                    );
+
+                    while (walker.nextNode()) {
+                        const node = walker.currentNode;
+                        const text = node.nodeValue ? node.nodeValue.trim() : '';
+                        if (text && text.length > 2 && text.length < 500) {
+                            allTexts.set(text, text);
+                        }
+                    }
+
+                    // Iframe'i temizle
+                    document.body.removeChild(tempIframe);
+
+                } catch (error) {
+                    console.error('Hata (' + file.name + '):', error);
+                }
+
+                processedPages++;
+                const percent = Math.round((processedPages / totalPages) * 100);
+                progressBar.style.width = percent + '%';
+                progressText.textContent = processedPages + ' / ' + totalPages + ' sayfa işlendi';
+            }
+
+            // JSON oluştur
+            const bulkJSON = {
+                texts: {},
+                info: {
+                    totalPages: totalPages,
+                    totalTexts: allTexts.size,
+                    exportDate: new Date().toISOString(),
+                    pageNames: files.map(f => f.name),
+                    instruction: "Bu JSON tüm sayfalarınızdaki metinleri içeriyor. AI'a gönderin ve tüm sayfaları birden çevirin!"
+                }
+            };
+
+            allTexts.forEach((value, key) => {
+                bulkJSON.texts[key] = key;
+            });
+
+            // JSON'u indir
+            const json = JSON.stringify(bulkJSON, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'all-pages-texts-for-ai.json';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            // Sonuçları göster
+            progress.style.display = 'none';
+            results.style.display = 'block';
+            document.getElementById('bulkStats').innerHTML = `
+                <p><strong>📄 İşlenen Sayfa:</strong> ${totalPages}</p>
+                <p><strong>📝 Toplam Metin:</strong> ${allTexts.size}</p>
+                <p><strong>💾 Dosya:</strong> all-pages-texts-for-ai.json</p>
+                <br>
+                <p style="color: #4ade80;">Bu JSON'u AI'a gönderin ve tüm sayfalarınızı birden çevirin!</p>
+            `;
+
+            showNotification('✅ ' + totalPages + ' sayfa, ' + allTexts.size + ' metin export edildi!');
+
+            console.log('📋 TÜM SAYFALAR JSON FORMATINDA:');
+            console.log(json);
+        }
+    </script>
+</body>
+
+</html>

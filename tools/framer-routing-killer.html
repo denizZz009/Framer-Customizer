@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔪 Framer Routing Killer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            color: #2d2f2e;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            color: #856404;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .step h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .file-label {
+            display: block;
+            background: #667eea;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .results {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            display: none;
+        }
+        
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+        }
+        
+        .progress {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔪 Framer Routing Killer</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+            Framer'ın routing sistemini tamamen devre dışı bırak
+        </p>
+        
+        <div class="warning">
+            <h3>🎯 Bu Araç Ne Yapar?</h3>
+            <ul style="margin-left: 1.5rem; line-height: 1.8; margin-top: 0.5rem;">
+                <li>Framer'ın tüm routing script'lerini siler</li>
+                <li>Tüm <code>data-framer-page-link</code> attribute'larını siler</li>
+                <li>Tüm <code>onClick</code> event'lerini temizler</li>
+                <li>Linkleri normal HTML linklerine çevirir</li>
+                <li>SPA davranışını tamamen kaldırır</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h2>1️⃣ HTML Dosyalarını Seçin</h2>
+            <label class="file-label" for="htmlFiles">
+                📂 HTML Dosyalarını Seç (Çoklu Seçim)
+            </label>
+            <input type="file" id="htmlFiles" class="file-input" accept=".html" multiple>
+            <div id="fileCount" style="text-align: center; color: #666; margin-top: 0.5rem;"></div>
+        </div>
+        
+        <div class="step">
+            <h2>2️⃣ Routing'i Öldür</h2>
+            <button class="btn" id="processBtn" onclick="processFiles()" disabled>
+                🔪 Framer Routing'i Öldür
+            </button>
+            
+            <div class="progress" id="progress">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+        </div>
+        
+        <div class="results" id="results">
+            <h3>✅ İşlem Tamamlandı!</h3>
+            <div id="resultsSummary"></div>
+            <button class="btn" onclick="downloadAll()">💾 Tüm Dosyaları İndir</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedFiles = [];
+        let processedFiles = [];
+        
+        document.getElementById('htmlFiles').addEventListener('change', function(e) {
+            selectedFiles = Array.from(e.target.files);
+            document.getElementById('fileCount').textContent = 
+                `✅ ${selectedFiles.length} dosya seçildi`;
+            document.getElementById('processBtn').disabled = false;
+        });
+        
+        async function processFiles() {
+            if (selectedFiles.length === 0) {
+                alert('Lütfen önce dosya seçin!');
+                return;
+            }
+            
+            const progress = document.getElementById('progress');
+            const progressBar = document.getElementById('progressBar');
+            
+            progress.style.display = 'block';
+            processedFiles = [];
+            
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const percent = Math.round(((i + 1) / selectedFiles.length) * 100);
+                
+                progressBar.style.width = percent + '%';
+                progressBar.textContent = percent + '%';
+                
+                try {
+                    let html = await file.text();
+                    let changes = 0;
+                    
+                    // 1. Framer routing script'lerini sil
+                    const routerScriptRegex = /<script[^>]*>[\s\S]*?(framer|router|__framer|FramerRouter|navigation)[\s\S]*?<\/script>/gi;
+                    const routerMatches = html.match(routerScriptRegex);
+                    if (routerMatches) {
+                        changes += routerMatches.length;
+                        html = html.replace(routerScriptRegex, '<!-- Framer router script removed -->');
+                    }
+                    
+                    // 2. data-framer-page-link attribute'larını sil
+                    const dataFramerRegex = /data-framer-page-link="[^"]*"/gi;
+                    const dataFramerMatches = html.match(dataFramerRegex);
+                    if (dataFramerMatches) {
+                        changes += dataFramerMatches.length;
+                        html = html.replace(dataFramerRegex, '');
+                    }
+                    
+                    // 3. data-framer-page-link-current attribute'larını sil
+                    html = html.replace(/data-framer-page-link-current="[^"]*"/gi, '');
+                    
+                    // 4. onClick event'lerini temizle (sadece Framer routing ile ilgili olanları)
+                    html = html.replace(/onClick="[^"]*navigate[^"]*"/gi, '');
+                    html = html.replace(/onClick="[^"]*router[^"]*"/gi, '');
+                    
+                    // 5. Framer'ın SPA init script'ini sil
+                    html = html.replace(/<script[^>]*>[\s\S]*?__framer[\s\S]*?<\/script>/gi, '<!-- Framer SPA init removed -->');
+                    
+                    // 6. Tüm <a> tag'lerinden Framer attribute'larını temizle
+                    html = html.replace(/<a([^>]*?)data-framer-[^=]*="[^"]*"([^>]*?)>/gi, '<a$1$2>');
+                    
+                    // 7. Normal HTML linklere çevir - href'leri düzelt
+                    // /about → about.html
+                    html = html.replace(/href="\/about"/g, 'href="about.html"');
+                    html = html.replace(/href="\/projects"/g, 'href="projects.html"');
+                    html = html.replace(/href="\/project-lobby"/g, 'href="project-lobby.html"');
+                    html = html.replace(/href="\/blog"/g, 'href="blog.html"');
+                    html = html.replace(/href="\/blog-lobby"/g, 'href="blog-lobby.html"');
+                    html = html.replace(/href="\/pricing"/g, 'href="pricing.html"');
+                    html = html.replace(/href="\/contact"/g, 'href="contact.html"');
+                    html = html.replace(/href="\/"/g, 'href="index.html"');
+                    
+                    // 8. Tek tırnak ile olanlar
+                    html = html.replace(/href='\/about'/g, "href='about.html'");
+                    html = html.replace(/href='\/projects'/g, "href='projects.html'");
+                    html = html.replace(/href='\/project-lobby'/g, "href='project-lobby.html'");
+                    html = html.replace(/href='\/blog'/g, "href='blog.html'");
+                    html = html.replace(/href='\/blog-lobby'/g, "href='blog-lobby.html'");
+                    html = html.replace(/href='\/pricing'/g, "href='pricing.html'");
+                    html = html.replace(/href='\/contact'/g, "href='contact.html'");
+                    html = html.replace(/href='\/'/g, "href='index.html'");
+                    
+                    processedFiles.push({
+                        name: file.name,
+                        content: html,
+                        changes: changes
+                    });
+                    
+                } catch (error) {
+                    console.error('Hata:', file.name, error);
+                }
+            }
+            
+            showResults();
+        }
+        
+        function showResults() {
+            const results = document.getElementById('results');
+            const summary = document.getElementById('resultsSummary');
+            const progress = document.getElementById('progress');
+            
+            const totalChanges = processedFiles.reduce((sum, f) => sum + f.changes, 0);
+            
+            summary.innerHTML = `
+                <p><strong>📊 Özet:</strong></p>
+                <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                    <li>✅ ${processedFiles.length} dosya işlendi</li>
+                    <li>🔪 ${totalChanges} Framer routing elementi silindi</li>
+                    <li>🔗 Tüm linkler normal HTML linklerine çevrildi</li>
+                </ul>
+                <br>
+                <p style="background: #fff3cd; padding: 1rem; border-radius: 8px; color: #856404;">
+                    <strong>⚠️ Önemli:</strong> İndirilen dosyaları eski dosyaların üzerine kopyalayın. 
+                    Artık Framer routing yok, normal HTML linkleri var!
+                </p>
+            `;
+            
+            progress.style.display = 'none';
+            results.style.display = 'block';
+        }
+        
+        function downloadAll() {
+            processedFiles.forEach(file => {
+                const blob = new Blob([file.content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            setTimeout(() => {
+                alert('✅ Tüm dosyalar indirildi!\n\nArtık normal HTML linkleri var. Navbar\'dan tıkladığında direkt dosyayı açacak!');
+            }, 500);
+        }
+    </script>
+</body>
+</html>

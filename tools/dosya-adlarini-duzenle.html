@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Dosya Adlarını Düzenle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            color: #2d2f2e;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .info {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            color: #0d47a1;
+        }
+        
+        .info h3 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .step h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .rename-list {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .rename-item {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e0e0e0;
+            align-items: center;
+        }
+        
+        .rename-item:last-child {
+            border-bottom: none;
+        }
+        
+        .old-name {
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .new-name {
+            color: #2196f3;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .arrow {
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .file-label {
+            display: block;
+            background: #667eea;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .results {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            display: none;
+        }
+        
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>📝 Dosya Adlarını Framer Route'larına Göre Düzenle</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+            En kolay çözüm: Dosya isimlerini Framer'ın beklediği isimlere çevir
+        </p>
+        
+        <div class="info">
+            <h3>💡 Neden Bu Daha İyi?</h3>
+            <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                <li>Framer'ın routing sistemi aynen çalışır</li>
+                <li>Hiçbir link değiştirmeye gerek yok</li>
+                <li>SEO dostu URL'ler (<code>/about</code>, <code>/projects</code>)</li>
+                <li>Tek seferlik işlem, sonsuza kadar çalışır</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h2>1️⃣ Önerilen Dosya İsimleri</h2>
+            <p>Framer'ın beklediği dosya isimleri:</p>
+            
+            <div class="rename-list">
+                <div class="rename-item">
+                    <div class="old-name">anasayfa.html</div>
+                    <div class="arrow">→</div>
+                    <div class="new-name">index.html</div>
+                </div>
+                <div class="rename-item">
+                    <div class="old-name">ajans.html</div>
+                    <div class="arrow">→</div>
+                    <div class="new-name">about.html</div>
+                </div>
+                <div class="rename-item">
+                    <div class="old-name">projeler/Projeler anasayfa.html</div>
+                    <div class="arrow">→</div>
+                    <div class="new-name">project-lobby.html</div>
+                </div>
+                <div class="rename-item">
+                    <div class="old-name">haberler/haberleranasayfa.html</div>
+                    <div class="arrow">→</div>
+                    <div class="new-name">blog-lobby.html</div>
+                </div>
+                <div class="rename-item">
+                    <div class="old-name">projeler/teklifler.html</div>
+                    <div class="arrow">→</div>
+                    <div class="new-name">pricing.html</div>
+                </div>
+                <div class="rename-item">
+                    <div class="old-name">iletisim.html</div>
+                    <div class="arrow">→</div>
+                    <div class="new-name">contact.html</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="step">
+            <h2>2️⃣ Otomatik Yeniden Adlandırma</h2>
+            <p>Tüm HTML dosyalarınızı seçin, otomatik olarak yeniden adlandırılacak:</p>
+            
+            <label class="file-label" for="htmlFiles">
+                📂 HTML Dosyalarını Seç (Çoklu Seçim)
+            </label>
+            <input type="file" id="htmlFiles" class="file-input" accept=".html" multiple>
+            <div id="fileCount" style="text-align: center; color: #666; margin-top: 0.5rem;"></div>
+            
+            <button class="btn" id="processBtn" onclick="processFiles()" disabled>
+                ✨ Dosyaları Yeniden Adlandır ve İndir
+            </button>
+        </div>
+        
+        <div class="results" id="results">
+            <h3>✅ İşlem Tamamlandı!</h3>
+            <div id="resultsSummary"></div>
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin-top: 1rem; color: #856404;">
+                <strong>⚠️ Önemli:</strong> İndirilen dosyaları eski dosyaların üzerine kopyalayın ve eski isimlerdeki dosyaları silin.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFiles = [];
+        let processedFiles = [];
+        
+        // Dosya ismi eşleştirme tablosu
+        const nameMap = {
+            'anasayfa.html': 'index.html',
+            'ajans.html': 'about.html',
+            'Projeler anasayfa.html': 'project-lobby.html',
+            'projeler anasayfa.html': 'project-lobby.html',
+            'haberleranasayfa.html': 'blog-lobby.html',
+            'teklifler.html': 'pricing.html',
+            'iletisim.html': 'contact.html',
+            'hakkimizda.html': 'about.html',
+            'hakkımızda.html': 'about.html',
+            'projeler.html': 'projects.html',
+            'haberler.html': 'blog.html',
+            'fiyatlar.html': 'pricing.html',
+            'iletişim.html': 'contact.html'
+        };
+        
+        document.getElementById('htmlFiles').addEventListener('change', function(e) {
+            selectedFiles = Array.from(e.target.files);
+            document.getElementById('fileCount').textContent = 
+                `✅ ${selectedFiles.length} dosya seçildi`;
+            document.getElementById('processBtn').disabled = false;
+        });
+        
+        async function processFiles() {
+            if (selectedFiles.length === 0) {
+                alert('Lütfen önce dosya seçin!');
+                return;
+            }
+            
+            processedFiles = [];
+            
+            for (const file of selectedFiles) {
+                try {
+                    const htmlContent = await file.text();
+                    const oldName = file.name;
+                    
+                    // Yeni ismi bul
+                    let newName = oldName;
+                    
+                    // Tam eşleşme ara
+                    if (nameMap[oldName]) {
+                        newName = nameMap[oldName];
+                    } else {
+                        // Kısmi eşleşme ara (case-insensitive)
+                        const lowerOldName = oldName.toLowerCase();
+                        for (const [key, value] of Object.entries(nameMap)) {
+                            if (lowerOldName.includes(key.toLowerCase())) {
+                                newName = value;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    processedFiles.push({
+                        oldName: oldName,
+                        newName: newName,
+                        content: htmlContent,
+                        changed: oldName !== newName
+                    });
+                    
+                } catch (error) {
+                    console.error('Hata:', file.name, error);
+                }
+            }
+            
+            showResults();
+        }
+        
+        function showResults() {
+            const results = document.getElementById('results');
+            const summary = document.getElementById('resultsSummary');
+            
+            const changedCount = processedFiles.filter(f => f.changed).length;
+            const unchangedCount = processedFiles.filter(f => !f.changed).length;
+            
+            let summaryHTML = `
+                <p><strong>📊 Özet:</strong></p>
+                <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                    <li>✅ Yeniden adlandırıldı: ${changedCount} dosya</li>
+                    <li>⚠️ Değişmedi: ${unchangedCount} dosya</li>
+                </ul>
+                <br>
+                <p><strong>📝 Değişiklikler:</strong></p>
+                <div style="background: white; padding: 1rem; border-radius: 8px; max-height: 200px; overflow-y: auto;">
+            `;
+            
+            processedFiles.forEach(file => {
+                if (file.changed) {
+                    summaryHTML += `
+                        <div style="padding: 0.5rem; border-bottom: 1px solid #e0e0e0; font-size: 0.9rem;">
+                            <span style="color: #666;">${file.oldName}</span>
+                            <span style="color: #667eea;"> → </span>
+                            <span style="color: #2196f3; font-weight: 600;">${file.newName}</span>
+                        </div>
+                    `;
+                }
+            });
+            
+            summaryHTML += '</div>';
+            summary.innerHTML = summaryHTML;
+            
+            results.style.display = 'block';
+            
+            // Otomatik indir
+            downloadAll();
+        }
+        
+        function downloadAll() {
+            processedFiles.forEach(file => {
+                const blob = new Blob([file.content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.newName; // Yeni isimle indir
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            setTimeout(() => {
+                alert(`✅ ${processedFiles.length} dosya indirildi!\n\n⚠️ Önemli:\n1. İndirilen dosyaları klasörünüze kopyalayın\n2. Eski isimlerdeki dosyaları silin\n3. Klasör yapısını düzenleyin (alt klasörleri kaldırın)`);
+            }, 500);
+        }
+    </script>
+</body>
+</html>

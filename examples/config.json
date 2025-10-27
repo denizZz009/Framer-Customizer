@@ -1,0 +1,81 @@
+{
+  "site": {
+    "title": "T.D-Lovera",
+    "description": "Lovera is a bold, all-in-one Framer template for creative agencies—ideal for branding, copywriting, web design, and more.",
+    "language": "tr",
+    "favicon": "https://framerusercontent.com/images/5aSVLm7CLfH4OoHLeGhQ88YeU.png"
+  },
+  "branding": {
+    "logo": {
+      "text": "LOVERA",
+      "trademark": "™",
+      "fontSize": "20px",
+      "fontFamily": "Antonio"
+    }
+  },
+  "colors": {
+    "primary": "#ff531f",
+    "primaryLight": "#ff825c",
+    "primaryLighter": "#ff9d80",
+    "background": "#2d2f2e",
+    "backgroundDark": "#171717",
+    "backgroundLight": "#f5f5f5",
+    "text": "#ffffff",
+    "textDark": "#171717",
+    "textGray": "#767f7a",
+    "accent": "#ffc8b8",
+    "accentLight": "#fff0eb"
+  },
+  "typography": {
+    "fontPrimary": "Inter",
+    "fontDisplay": "Antonio",
+    "fontSecondary": "Oswald"
+  },
+  "navigation": {
+    "desktop": [
+      { "text": "Studio", "url": "/about" },
+      { "text": "Projects", "url": "/project-lobby" },
+      { "text": "News", "url": "/blog-lobby" },
+      { "text": "Pricing", "url": "/pricing" },
+      { "text": "Contact", "url": "mailto:hello@lovera.com" }
+    ],
+    "mobile": {
+      "linksTitle": "Links",
+      "contactTitle": "Get in touch",
+      "links": [
+        { "text": "Home", "url": "/" },
+        { "text": "Studio", "url": "/about" },
+        { "text": "Projects", "url": "/project-lobby" },
+        { "text": "News", "url": "/blog-lobby" },
+        { "text": "Pricing", "url": "/pricing" }
+      ]
+    }
+  },
+  "hero": {
+    "title": "LOVERA",
+    "titleFontSize": "clamp(80px, 20vw, 320px)",
+    "services": [
+      "Product design",
+      "Content strategy",
+      "Brand identity design",
+      "Web development"
+    ]
+  },
+  "contact": {
+    "email": "hello@lovera.com",
+    "phone": "(0523) 6363-362",
+    "phoneRaw": "05236363362",
+    "location": "Los Angeles"
+  },
+  "animations": {
+    "enabled": true,
+    "gridAnimation": true,
+    "parallax": true,
+    "fadeIn": true,
+    "customCursor": true
+  },
+  "seo": {
+    "ogImage": "https://framerusercontent.com/images/yKEgOuWakvdc8xSOktguCiyifI.png",
+    "twitterCard": "summary_large_image"
+  }
+}
