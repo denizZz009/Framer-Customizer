@@ -12,6 +12,8 @@ Transform your Framer exports with AI-powered translations, live color previews,
 
 ## 🌟 Features
 
+<img width="1916" height="914" alt="Screenshot_2" src="https://github.com/user-attachments/assets/b0f9604d-8982-4038-9279-9663f550aa33" />
+
 ### 🤖 AI-Powered Customization
 - **Automatic Translation**: Translate 150+ texts in 30 seconds with ChatGPT/Claude
 - **Smart JSON Export**: Export all texts in JSON format for easy editing
