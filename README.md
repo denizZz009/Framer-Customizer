@@ -512,16 +512,6 @@ If this project helped you, please give it a ⭐️!
 
 ---
 
-## 🎉 Success Stories
-
-> "Translated my entire 50-page Framer site to Turkish in 10 minutes. Would have taken me days!" - User 1
-
-> "The live color preview is amazing! Changed my entire brand colors in 2 minutes." - User 2
-
-> "Bulk export saved me 20+ hours of work. This toolkit is a lifesaver!" - User 3
-
----
-
 **Made with ❤️ for the Framer community**
 
 **⭐ Star this repo if it helped you!**
